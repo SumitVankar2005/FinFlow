@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinFlow | Create Account</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0d0f14;
+        --bg2: #161a23;
+        --bg3: #1e2330;
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e8eaf0;
+        --muted: #7a8099;
+        --accent: #6c8eff;
+        --accent2: #4ecca3;
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: linear-gradient(180deg, var(--bg), var(--bg2));
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      a {
+        text-decoration: none !important;
+        color: inherit;
+      }
+
+      /* --- BRAND SECTION FIXES --- */
+      .brand-row {
+        grid-column: 1 / -1;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 16px;
+        padding-bottom: 40px;
+        text-decoration: none !important; /* In case it's wrapped in an <a> tag */
+      }
+
+      .brand-text-group {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-decoration: none !important;
+      }
+
+      .brand-title {
+        font-family: "DM Serif Display", serif !important;
+        font-size: 4.5rem !important; /* Standardized size */
+        color: #6c8eff !important;
+        line-height: 1;
+        margin: 0;
+        white-space: nowrap;
+        display: flex !important; /* Keeps JS spans side-by-side */
+        text-decoration: none !important;
+      }
+
+      /* Logic to catch the 'Flow' part after JS splits it */
+      .brand-title span:nth-child(2) {
+        color: #6c8eff !important;
+        text-decoration: none !important;
+      }
+
+      .brand-subtitle {
+        font-family: "DM Sans", sans-serif !important;
+        font-size: 14px !important;
+        color: #7a8099 !important;
+        margin-top: 4px !important;
+        letter-spacing: 0.2px !important;
+        white-space: nowrap !important;
+        opacity: 0.8;
+        text-decoration: none !important;
+      }
+
+      /* --- ANIMATIONS & REVEALS --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        filter: blur(10px);
+        transition:
+          opacity 0.9s ease,
+          transform 0.9s ease,
+          filter 0.9s ease;
+      }
+
+      /* Ensure animated words stay inline */
+      .reveal-text span {
+        display: inline-block !important;
+        opacity: 0;
+        filter: blur(10px);
+        transform: translateY(-20px);
+        animation: blurReveal 1s forwards;
+        /* white-space: pre; Keeps spaces between words */
+      }
+
+      @keyframes blurReveal {
+        0% {
+          opacity: 0;
+          filter: blur(10px);
+          transform: translateY(-20px);
+        }
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
+        }
+      }
+
+      .visible {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        filter: blur(0) !important;
+      }
+
+      /* --- CARDS & INTERACTIVITY --- */
+      .benefit,
+      .signup-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        position: relative;
+        overflow: visible;
+        transition: all 0.9s ease;
+      }
+
+      .signup-card {
+        padding: 40px;
+        box-shadow: var(--shadow);
+      }
+      .benefit {
+        padding: 24px;
+      }
+
+      .benefit::before,
+      .signup-card::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 2px;
+        background: conic-gradient(
+          from var(--glow-angle, 0deg),
+          rgba(108, 142, 255, 0.8),
+          rgba(199, 125, 255, 0.5),
+          rgba(78, 204, 163, 0.6),
+          rgba(108, 142, 255, 0.8)
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .benefit:hover::before,
+      .signup-card:hover::before {
+        opacity: 1;
+      }
+
+      .benefit *,
+      .signup-card * {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* --- LAYOUT GRID --- */
+      .wrapper {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 48px;
+        align-items: center;
+        padding: 5% 8%;
+      }
+
+      h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: clamp(2.8rem, 5vw, 4.8rem);
+        line-height: 1.05;
+        margin-bottom: 18px;
+      }
+
+      .benefits {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 36px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .field {
+        margin-bottom: 18px;
+      }
+      .full {
+        grid-column: 1 / -1;
+      }
+      .field label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .field input,
+      .field textarea {
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        color: var(--text);
+        outline: none;
+      }
+      .btn {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 14px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+
+      @media (max-width: 980px) {
+        .wrapper {
+          grid-template-columns: 1fr;
+          padding: 40px 6%;
+        }
+        .benefits,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .brand-row {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="sparkCanvas"></canvas>
+
+    <div class="wrapper">
+      <!-- Brand Header -->
+      <div class="brand-row">
+        <a href="./FinFlow.html">
+          <div class="brand-text-group reveal">
+            <!-- Note: No reveal-text on the GROUP div. Put it on the text itself. -->
+            <div class="brand-title">
+              <span style="color: #e8eaf0">Fin</span>Flow
+            </div>
+            <div class="brand-subtitle">Smart personal finance management</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Left Content -->
+      <section class="left">
+        <h1 class="reveal">Build your financial future with confidence.</h1>
+        <p class="reveal">
+          Create your FinFlow account to track income, expenses, budgets, and
+          investments — all in one place.
+        </p>
+
+        <div class="benefits">
+          <div class="benefit reveal">
+            <h3>Everything connected</h3>
+            <p>Link bank accounts and expenses for a complete picture.</p>
+          </div>
+          <div class="benefit reveal">
+            <h3>Goal-driven planning</h3>
+            <p>Stay on top of budgets and savings targets.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Signup Card -->
+      <section class="signup-card reveal">
+        <h2>Create account</h2>
+        <form id="signupForm">
+    <div class="grid">
+        <div class="field"><label>Full Name</label><input id="name" type="text" placeholder="Enter name"></div>
+        <div class="field"><label>Email</label><input id="email" type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input id="password" type="password" placeholder="Create password"></div>
+        <div class="field"><label>Confirm</label><input id="confirmPassword" type="password" placeholder="Confirm password"></div>
+    </div>
+    <button type="button" class="btn" id="signupBtn">Create Account</button>
+    <div style="text-align:center; margin-top:20px; font-size:14px;">
+        Already have an account? <a href="./login.html" style="color:var(--accent)">Log in</a>
+    </div>
+</form>
+      </section>
+    </div>
+
+    <script>
+      // 1. Improved Blur Animation Function
+      function applyBlurTextAnimation(element, delay = 120) {
+        if (!element || element.dataset.animated) return;
+        element.dataset.animated = "true";
+
+        const text = element.innerText.trim();
+        const words = text.split(/\s+/);
+        element.innerHTML = "";
+
+        words.forEach((word, i) => {
+          const span = document.createElement("span");
+          span.innerHTML = word + "&nbsp;";
+
+          // Keep 'Flow' blue
+          if (word.toLowerCase().includes("flow")) {
+            span.style.color = "#6c8eff";
+          }
+
+          span.style.animationDelay = `${i * delay}ms`;
+          element.appendChild(span);
+        });
+      }
+
+      // 2. Unified Intersection Observer
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              if (entry.target.classList.contains("reveal-text")) {
+                applyBlurTextAnimation(entry.target);
+              }
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      document
+        .querySelectorAll(".reveal, .reveal-text, .benefit, .signup-card")
+        .forEach((el) => io.observe(el));
+
+      // 3. Mouse Glow Interaction
+      document.querySelectorAll(".benefit, .signup-card").forEach((card) => {
+        card.addEventListener("mousemove", (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const angle =
+            Math.atan2(y - rect.height / 2, x - rect.width / 2) *
+              (180 / Math.PI) +
+            90;
+          card.style.setProperty("--mouse-x", `${x}px`);
+          card.style.setProperty("--mouse-y", `${y}px`);
+          card.style.setProperty("--glow-angle", `${angle}deg`);
+        });
+      });
+
+      // 4. Spark Canvas
+      const canvas = document.getElementById("sparkCanvas");
+      const ctx = canvas.getContext("2d");
+      let sparks = [];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+      window.addEventListener("click", (e) => {
+        let now = performance.now();
+        for (let i = 0; i < 8; i++)
+          sparks.push({
+            x: e.clientX,
+            y: e.clientY,
+            angle: (2 * Math.PI * i) / 8,
+            start: now,
+          });
+      });
+      (function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let now = performance.now();
+        sparks = sparks.filter((p) => {
+          let d = now - p.start;
+          if (d > 500) return false;
+          let pr = d / 500,
+            ds = pr * (2 - pr) * 22,
+            len = 10 * (1 - pr);
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(
+            p.x + ds * Math.cos(p.angle),
+            p.y + ds * Math.sin(p.angle),
+          );
+          ctx.lineTo(
+            p.x + (ds + len) * Math.cos(p.angle),
+            p.y + (ds + len) * Math.sin(p.angle),
+          );
+          ctx.stroke();
+          return true;
+        });
+        requestAnimationFrame(animate);
+      })();
+    </script>
+    <script>
+    const API_BASE = "http://localhost:5000/api";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const signupBtn = document.getElementById("signupBtn");
+      if (!signupBtn) return;
+
+      signupBtn.addEventListener("click", async () => {
+        const name = document.getElementById("name")?.value.trim();
+        const email = document.getElementById("email")?.value.trim();
+        const password = document.getElementById("password")?.value;
+        const confirmPassword = document.getElementById("confirmPassword")?.value;
+
+        if (!name || !email || !password || !confirmPassword) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match");
+          return;
+        }
+
+        const phone = "99999" + Math.floor(10000 + Math.random() * 90000);
+
+        try {
+          const res = await fetch(`${API_BASE}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, phone, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.error || data.msg || "Registration failed");
+            return;
+          }
+
+          alert("Account created successfully");
+          window.location.href = "./login.html";
+        } catch (err) {
+          alert("Server error: " + err.message);
+        }
+      });
+    });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinFlow Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f14; --bg2: #161a23; --bg3: #1e2330;
+            --border: rgba(255,255,255,.07); --text: #e8eaf0;
+            --muted: #7a8099; --accent: #6c8eff; --accent2: #4ecca3;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); min-height:100vh; overflow-x:hidden; }
+        canvas { position:fixed; inset:0; pointer-events:none; z-index:99; }
+        a { text-decoration:none !important; }
+
+        .brand-row { grid-column:1/-1; display:flex !important; flex-direction:row !important; align-items:center !important; gap:16px; padding-bottom:40px; }
+        .brand-text-group { display:flex !important; flex-direction:column !important; align-items:flex-start !important; }
+        .brand-title { font-family:'DM Serif Display',serif !important; font-size:4.5rem !important; color:#6c8eff !important; line-height:1; margin:0; white-space:nowrap; display:flex !important; }
+        .brand-subtitle { font-family:'DM Sans',sans-serif !important; font-size:14px !important; color:#7a8099 !important; margin-top:4px !important; letter-spacing:0.2px !important; white-space:nowrap !important; opacity:0.8; }
+
+        .reveal { opacity:0; transform:translateY(40px); filter:blur(10px); transition:all .9s ease; }
+        .visible { opacity:1 !important; transform:translateY(0) !important; filter:blur(0) !important; }
+
+        .wrapper { min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; align-items:center; padding:5% 8%; gap:48px; }
+
+        .tag { display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(108,142,255,.12); border:1px solid var(--border); color:var(--accent); margin-bottom:20px; }
+        h1 { font-family:'DM Serif Display',serif; font-size:clamp(3rem,5vw,5rem); line-height:1.05; margin-bottom:18px; }
+        .accent { color:var(--accent); }
+        p { color:var(--muted); line-height:1.7; font-size:18px; }
+
+        .features { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+        .feature, .login-card {
+            background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:28px; padding:24px;
+            position:relative; overflow:hidden;
+            opacity:0; transform:translateY(40px); filter:blur(10px);
+            transition:opacity 0.9s ease,transform 0.9s ease,filter 0.9s ease;
+        }
+        .login-card { padding:42px; }
+        .feature.visible, .login-card.visible { opacity:1; transform:translateY(0); filter:blur(0); }
+
+        .feature::before, .login-card::before {
+            content:''; position:absolute; inset:-6px; border-radius:inherit; padding:4px;
+            background:conic-gradient(from var(--glow-angle,0deg),rgba(108,142,255,1.85),rgba(199,125,255,1.55),rgba(78,204,163,1.6),rgba(108,142,255,1.85));
+            -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+            -webkit-mask-composite:xor; mask-composite:exclude;
+            opacity:0; transition:opacity 0.35s ease; pointer-events:none;
+        }
+        .feature:hover::before, .login-card:hover::before { opacity:1; }
+
+        .field { margin-bottom:18px; }
+        .field label { display:block; font-size:13px; color:var(--muted); margin-bottom:8px; }
+        .field input { width:100%; padding:14px 16px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--text); outline:none; transition:border-color 0.2s; font-family:'DM Sans',sans-serif; font-size:14px; }
+        .field input:focus { border-color:var(--accent); }
+
+        .row { display:flex; justify-content:space-between; align-items:center; margin:14px 0 24px; font-size:14px; }
+        .row a { color:var(--accent); }
+
+        .btn { width:100%; padding:15px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; transition:opacity 0.2s; font-family:'DM Sans',sans-serif; font-size:15px; }
+        .btn:hover { opacity:.9; }
+        .btn:disabled { opacity:.6; cursor:not-allowed; }
+
+        .signup { text-align:center; margin-top:22px; font-size:14px; }
+        .signup a { color:var(--accent); }
+        .error-msg { color:#ff5c6e; font-size:13px; margin-bottom:12px; display:none; }
+
+        @media (max-width:900px) {
+            .wrapper { grid-template-columns:1fr; padding:40px 6%; }
+            .features { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="sparkCanvas"></canvas>
+
+    <div class="wrapper">
+        <div class="brand-row">
+            <a href="./FinFlow.html">
+                <div class="brand-text-group">
+                    <!-- FIX: removed extra double-quote from original -->
+                    <div class="brand-title"><span style="color:#e8eaf0">Fin</span>Flow</div>
+                    <div class="brand-subtitle">Smart personal finance management</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="left">
+            <div class="tag reveal">Secure. Smart. Seamless.</div>
+            <h1 class="reveal">Welcome back to <span class="accent">FinFlow</span></h1>
+            <p class="reveal">Log in to manage your money, track your progress, and stay in control of every financial decision.</p>
+            <div class="features" style="margin-top:28px;">
+                <div class="feature reveal"><strong>Real-time dashboard</strong><br><span style="color:var(--muted);font-size:14px">See balances, budgets, and cash flow instantly.</span></div>
+                <div class="feature reveal"><strong>Secure by design</strong><br><span style="color:var(--muted);font-size:14px">Bank-level security and private access.</span></div>
+                <div class="feature reveal"><strong>Subscription alerts</strong><br><span style="color:var(--muted);font-size:14px">Never miss renewals or payments.</span></div>
+                <div class="feature reveal"><strong>Smart insights</strong><br><span style="color:var(--muted);font-size:14px">Make better money decisions every day.</span></div>
+            </div>
+        </div>
+
+        <div class="reveal login-card">
+            <h2 style="font-family:'DM Serif Display',serif;font-size:2.2rem;margin-bottom:10px">Sign in</h2>
+            <p style="font-size:15px;margin-bottom:8px;">Access your personalized financial dashboard.</p>
+
+            <div class="error-msg" id="errorMsg"></div>
+
+            <div class="field" style="margin-top:20px;">
+                <label>Email address</label>
+                <input type="email" id="email" placeholder="you@example.com">
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+
+            <div class="row">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button class="btn" id="loginBtn" type="button">Log In</button>
+
+            <div class="signup">
+                New to FinFlow? <a href="./createAccount.html">Create an account</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:5000/api";
+
+        // ── Login logic ──
+        document.getElementById("loginBtn").addEventListener("click", async () => {
+            const email    = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const errorMsg = document.getElementById("errorMsg");
+            const btn      = document.getElementById("loginBtn");
+
+            errorMsg.style.display = "none";
+
+            if (!email || !password) {
+                errorMsg.textContent = "Please enter your email and password.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Logging in...";
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    errorMsg.textContent = data.msg || data.error || "Login failed";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                window.location.href = "./dashboard.html";
+
+            } catch (err) {
+                errorMsg.textContent = "Cannot connect to server. Make sure backend is running.";
+                errorMsg.style.display = "block";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Log In";
+            }
+        });
+
+        // Allow pressing Enter to log in
+        document.addEventListener("keydown", e => {
+            if (e.key === "Enter") document.getElementById("loginBtn").click();
+        });
+
+        // ── Scroll reveal ──
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll(".reveal, .feature, .login-card").forEach(el => io.observe(el));
+
+        // ── Mouse glow ──
+        document.querySelectorAll(".feature, .login-card").forEach(card => {
+            card.addEventListener("mousemove", e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const angle = Math.atan2(y - rect.height/2, x - rect.width/2) * (180/Math.PI) + 90;
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+                card.style.setProperty("--glow-angle", `${angle}deg`);
+            });
+        });
+
+        // ── Spark canvas ──   FIX: 'now' was undefined in original — moved inside handler
+        const canvas = document.getElementById("sparkCanvas");
+        const ctx = canvas.getContext("2d");
+        let sparks = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener("resize", resize); resize();
+
+        window.addEventListener("click", e => {
+            let now = performance.now(); // ← FIX: define now here, not inside animate()
+            for (let i = 0; i < 8; i++) {
+                sparks.push({ x: e.clientX, y: e.clientY, angle: (2 * Math.PI * i) / 8, startTime: now });
+            }
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let now = performance.now();
+            sparks = sparks.filter(p => {
+                let elapsed = now - p.startTime;
+                if (elapsed > 500) return false;
+                let progress = elapsed / 500;
+                let distance = progress * (2 - progress) * 22;
+                let length = 10 * (1 - progress);
+                ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.beginPath();
+                ctx.moveTo(p.x + distance * Math.cos(p.angle), p.y + distance * Math.sin(p.angle));
+                ctx.lineTo(p.x + (distance + length) * Math.cos(p.angle), p.y + (distance + length) * Math.sin(p.angle));
+                ctx.stroke();
+                return true;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

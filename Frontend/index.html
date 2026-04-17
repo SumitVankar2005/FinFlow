@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FinFlow</title>
+</head>
+<body>
+<script>
+const token = localStorage.getItem("token");
+window.location.href = token ? "./dashboard.html" : "./FinFlow.html";
+</script>
+</body>
+</html>

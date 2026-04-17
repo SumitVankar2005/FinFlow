@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinFlow Hero Section</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f14;
+            --bg2: #161a23;
+            --bg3: #1e2330;
+            --border: rgba(255, 255, 255, .07);
+            --text: #e8eaf0;
+            --muted: #7a8099;
+            --accent: #6c8eff;
+            --accent2: #4ecca3;
+            --shadow: 0 10px 40px rgba(0, 0, 0, .45);
+        }
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(180deg, var(--bg), var(--bg2));
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 48px;
+            align-items: center;
+            padding: 80px 8%;
+        }
+
+        .hero-content {
+            max-width: 640px;
+        }
+
+/* Container for the logo and the text */
+        /* This is the main horizontal wrapper */
+        .brand-row {
+            display: flex;
+            flex-direction: row; /* Change from column to row */
+            align-items: center; /* Keeps everything vertically centered */
+            gap: 16px;
+            font-family: 'DM Sans', sans-serif;
+            padding-bottom: 5%;
+        }
+
+        /* This is a wrapper for JUST the text to keep it stacked properly */
+        .brand-text-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Keeps text aligned to the left */
+        }
+
+        .brand-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 4.5rem;
+            color: #ffffff;
+            line-height: 1;
+            white-space: nowrap; /* Forces "FinFlow" to stay on one line */
+        }
+
+        .brand-title span:nth-child(2)
+        {
+            color: #6c8eff;
+        }
+
+        .brand-title span{
+            color: inherit;
+        }
+
+        .brand-title .accent-color{
+            color: #6c8eff;
+        }
+
+        .brand-title2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            color: #6c8eff;
+            line-height: 1;
+            white-space: nowrap; /* Forces "FinFlow" to stay on one line */
+        }
+
+        .brand-subtitle {
+            font-size: 14px;
+            color: #7a8099;
+            margin-top: 4px;
+            letter-spacing: 0.2px;
+            white-space: nowrap; /* Prevents "Smart personal..." from breaking */
+        }
+
+        .feature-card,
+        .hero-visual,
+        .visual-card {
+            opacity: 0;
+            transform: translateY(40px);
+            filter: blur(10px);
+            transition: opacity 0.9s ease, transform 0.9s ease, filter 0.9s ease;
+        }
+
+        .feature-card.visible,
+        .hero-visual.visible,
+        .visual-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        .feature-card,
+        .hero-visual,
+        .visual-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before,
+        .hero-visual::before,
+        .visual-card::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: inherit;
+            padding: 4px;
+            background: conic-gradient(from var(--glow-angle, 0deg), 
+            rgba(108, 142, 255, 1.05), 
+            rgba(199, 125, 255, 0.75), 
+            rgba(78, 204, 163, 0.8), 
+            rgba(108, 142, 255, 1.05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
+        }
+
+        .feature-card::after,
+        .hero-visual::after,
+        .visual-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(108, 142, 255, 0.16), transparent 65%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover::before,
+        .feature-card:hover::after,
+        .hero-visual:hover::before,
+        .hero-visual:hover::after,
+        .visual-card:hover::before,
+        .visual-card:hover::after {
+            opacity: 1;
+        }
+
+        .reveal-text span {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(-40px);
+            animation: blurReveal 1.2s forwards;
+        }
+
+        .blur-text span {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(-40px);
+            animation: blurReveal 1.0s forwards;
+        }
+
+        @keyframes blurReveal {
+            0% {
+                opacity: 0;
+                filter: blur(10px);
+                transform: translateY(-40px);
+            }
+
+            60% {
+                opacity: 0.6;
+                filter: blur(4px);
+                transform: translateY(6px);
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(108, 142, 255, 0.12);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            font-size: 13px;
+            margin-bottom: 24px;
+            animation: blurReveal 1.0s forwards;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(3rem, 6vw, 5.2rem);
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtext {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: .2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg3);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .hero-visual {
+            background: linear-gradient(145deg, var(--bg3), var(--bg2));
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        .visual-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .metric {
+            font-size: 40px;
+            font-family: 'DM Serif Display', serif;
+            margin: 8px 0;
+        }
+
+        .label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .trust {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 60px 6%;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="reveal-page">
+    <canvas id="sparkCanvas"
+        style="position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:9999;"></canvas>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="brand-row">
+                <a href="./FinFlow.html">
+                <div class="brand-text-group">
+                    <div class="brand-title reveal-text"><span style="color: #e8eaf0;"">Fin</span>Flow</div>
+                    <div class="brand-subtitle reveal-text">Smart personal finance management</div>
+                </div>
+                </a>
+            </div>
+
+            <div class="badge reveal-text">Smarter personal finance starts here</div>
+            <h1 class="blur-text reveal-text" id="hero-heading">Take control of your money without the stress.</h1>
+            <p class="subtext reveal-text">FinFlow brings your spending, savings, subscriptions, and investments into one clean dashboard — so you can make better financial decisions every day.
+            </p>
+
+            <div class="cta-row">
+                <a href="./createAccount.html" class="btn btn-primary">Get Started Free</a>
+                <a href="./login.html" class="btn btn-secondary">Log In</a>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3 class="reveal-text">Track everything</h3>
+                    <p class="reveal-text">Monitor accounts, expenses, and cash flow in real time without juggling multiple apps.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="reveal-text">Stay ahead</h3>
+                    <p class="reveal-text">Get reminders for bills, subscriptions, and budgets before they become problems.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="reveal-text">Grow smarter</h3>
+                    <p class="reveal-text">See investments, savings goals, and long-term progress in one place.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="reveal-text">Built for clarity</h3>
+                    <p class="reveal-text">A modern dashboard designed to make money management feel simple and effortless.</p>
+                </div>
+            </div>
+
+            <p class="trust reveal-text">Free to start • Secure by design • No hidden fees</p>
+        </div>
+
+        <div class="hero-visual">
+            <div class="visual-card">
+                <div class="label">Total Balance</div>
+                <div class="metric">₹4.8L</div>
+                <div class="label">Across all linked accounts</div>
+            </div>
+
+            <div class="visual-card">
+                <div class="label">Monthly Savings</div>
+                <div class="metric" style="color:var(--accent2);">+₹72,400</div>
+                <div class="label">On track to hit your goal this month</div>
+            </div>
+
+            <div class="visual-card">
+                <div class="label">Why users choose FinFlow</div>
+                <p style="color:var(--muted); line-height:1.7; margin-top:10px;">
+                    One app to budget smarter, avoid overspending, and build long-term financial confidence.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding:80px 8%; background:var(--bg2); border-top:1px solid var(--border);">
+        <div style="max-width:1200px; margin:0 auto; text-align:center; margin-bottom:60px;">
+            <div class="badge">Everything you need to stay financially ahead</div>
+            <h2 class="reveal-text"
+                style="font-family:'DM Serif Display',serif; font-size:clamp(2.2rem,5vw,4rem); margin-bottom:16px;"> Powerful features built for modern money management</h2>
+            <p class="reveal-text" style="max-width:700px; margin:0 auto; color:var(--muted); font-size:18px; line-height:1.7;"> FinFlow helps you understand where your money goes, stay on budget, and plan ahead with confidence.
+            </p>
+        </div>
+
+        <div
+            style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; max-width:1200px; margin:0 auto;">
+            <div class="feature-card">
+                <h3 class="reveal-text">Unified Dashboard</h3>
+                <p class="reveal-text">See balances, cash flow, budgets, and net worth at a glance in one beautifully organized view.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="reveal-text">Expense Tracking</h3>
+                <p class="reveal-text">Categorize spending automatically and uncover patterns that help you cut unnecessary costs.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="reveal-text">Smart Budgeting</h3>
+                <p class="reveal-text">Set custom limits, track progress live, and get alerts before you overspend.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="reveal-text">Investment Insights</h3>
+                <p class="reveal-text">Monitor your portfolio performance, gains, and long-term wealth growth in real time.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="reveal-text">Loan & EMI Manager</h3>
+                <p class="reveal-text">Track repayments, due dates, and outstanding balances without the stress.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="reveal-text">Subscription Control</h3>
+                <p class="reveal-text">Never miss a renewal or waste money on forgotten subscriptions again.</p>
+            </div>
+        </div>
+    </section>
+    <script>
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.feature-card, .hero-visual, .visual-card').forEach(el => {
+            fadeObserver.observe(el);
+        });
+
+        document.querySelectorAll('.feature-card, .hero-visual, .visual-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const cx = rect.width / 2;
+                const cy = rect.height / 2;
+                const angle = Math.atan2(y - cy, x - cx) * (180 / Math.PI) + 90;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                card.style.setProperty('--glow-angle', `${angle}deg`);
+            });
+        });
+
+
+        function applyBlurTextAnimation(element, delay = 120) {
+            if (!element || element.dataset.animated) return;
+            element.dataset.animated = 'true';
+
+            const text = element.innerHTML.trim();
+            const words = text.split(/\s+/);
+            element.innerHTML = '';
+
+            for (let i = 0; i < words.length; i += 5) {
+                const chunk = words.slice(i, i + 5).join(' ');
+                const span = document.createElement('span');
+
+                span.innerHTML = chunk + '&nbsp;';
+                if (chunk.includes('Flow')){
+                    span.style.color = '#6c8eff';
+                }
+                span.style.display = 'inline-block';
+                span.style.animationDelay = `${(i / 5) * delay}ms`;
+
+                element.appendChild(span);
+            }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    applyBlurTextAnimation(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
+        const sparkCanvas = document.getElementById('sparkCanvas');
+        const sparkCtx = sparkCanvas.getContext('2d');
+        let sparks = [];
+
+        function resizeSparkCanvas() {
+            sparkCanvas.width = window.innerWidth;
+            sparkCanvas.height = window.innerHeight;
+        }
+        resizeSparkCanvas();
+        window.addEventListener('resize', resizeSparkCanvas);
+
+        function animateSparks() {
+            sparkCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+            const now = performance.now();
+
+            sparks = sparks.filter(spark => {
+                const elapsed = now - spark.start;
+                if (elapsed > 500) return false;
+
+                const progress = elapsed / 500;
+                const eased = progress * (2 - progress);
+                const dist = eased * 22;
+                const len = 10 * (1 - eased);
+
+                const x1 = spark.x + dist * Math.cos(spark.angle);
+                const y1 = spark.y + dist * Math.sin(spark.angle);
+                const x2 = spark.x + (dist + len) * Math.cos(spark.angle);
+                const y2 = spark.y + (dist + len) * Math.sin(spark.angle);
+
+                sparkCtx.strokeStyle = '#ffffff';
+                sparkCtx.lineWidth = 2;
+                sparkCtx.beginPath();
+                sparkCtx.moveTo(x1, y1);
+                sparkCtx.lineTo(x2, y2);
+                sparkCtx.stroke();
+
+                return true;
+            });
+
+            requestAnimationFrame(animateSparks);
+        }
+        animateSparks();
+
+        window.addEventListener('click', (e) => {
+            const count = 8;
+            const now = performance.now();
+            for (let i = 0; i < count; i++) {
+                sparks.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    angle: (Math.PI * 2 * i) / count,
+                    start: now
+                });
+            }
+        });
+    </script>
+    <script>
+    if (localStorage.getItem("token")) {
+    window.location.href = "./dashboard.html";
+    }
+    </script>
+</body>
+
+</html>
