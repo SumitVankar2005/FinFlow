@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcryptjs.hash(password, 10);
 
     await db.query(
       "INSERT INTO Users (name, email, phone, password, reg_date) VALUES (?, ?, ?, ?, CURDATE())",
@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
 
     const user = rows[0];
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ error: "Wrong password" });
