@@ -43,16 +43,25 @@ FinFlow/
 mysql -u root -p
 
 # Run schema
-source /give full address/Database/schema.sql
+mysql -u root -p < Database/schema.sql
 
-# Load sample data
-source /give full address/Database/sample_data.sql
+# (Optional) Load sample data
+mysql -u root -p < Database/sample_data.sql
 ```
 
 ### 2. Backend Setup
 
 ```bash
 cd Backend
+
+# Copy environment file
+cp .env.example .env
+
+# Edit .env with your database credentials
+# DB_HOST=localhost
+# DB_USER=root
+# DB_PASS=your_password
+# DB_NAME=finance_db
 
 # Install dependencies
 npm install
@@ -71,6 +80,37 @@ Or serve with a static server:
 cd Frontend
 npx serve
 ```
+
+## API Endpoints
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/auth/register` | Register new user | No |
+| POST | `/api/auth/login` | User login | No |
+| GET | `/api/dashboard` | Get dashboard metrics | Yes |
+| GET | `/api/accounts` | List accounts | Yes |
+| POST | `/api/accounts` | Add account | Yes |
+| DELETE | `/api/accounts/:id` | Delete account | Yes |
+| GET | `/api/income` | List income sources | Yes |
+| POST | `/api/income` | Add income | Yes |
+| DELETE | `/api/income/:id` | Delete income | Yes |
+| GET | `/api/expenses` | List expenses | Yes |
+| POST | `/api/expenses` | Add expense | Yes |
+| DELETE | `/api/expenses/:id` | Delete expense | Yes |
+| GET | `/api/budgets` | List budgets | Yes |
+| POST | `/api/budgets` | Set budget | Yes |
+| DELETE | `/api/budgets/:id` | Delete budget | Yes |
+| GET | `/api/investments` | List investments | Yes |
+| POST | `/api/investments` | Add investment | Yes |
+| DELETE | `/api/investments/:id` | Delete investment | Yes |
+| GET | `/api/loans` | List loans | Yes |
+| POST | `/api/loans` | Add loan | Yes |
+| DELETE | `/api/loans/:id` | Delete loan | Yes |
+| GET | `/api/subscriptions` | List subscriptions | Yes |
+| POST | `/api/subscriptions` | Add subscription | Yes |
+| DELETE | `/api/subscriptions/:id` | Delete subscription | Yes |
+| GET | `/api/users/me` | Get user profile | Yes |
+| PUT | `/api/users/me` | Update profile | Yes |
 
 ## Default Test Credentials
 
