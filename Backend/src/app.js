@@ -6,7 +6,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: "https://fin-flow-khaki.vercel.app",
+  origin: "https://fin-flow-two-nu.vercel.app",
   credentials: true
 }));
 app.use(express.json());
