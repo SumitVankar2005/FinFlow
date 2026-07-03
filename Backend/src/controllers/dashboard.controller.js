@@ -6,18 +6,18 @@ exports.getDashboard = async (req, res) => {
     const userId = req.user.id;
 
     const [accounts] = await db.query(
-      "SELECT SUM(balance) AS totalBalance FROM Accounts WHERE user_id = ?",
+      "SELECT SUM(balance) AS totalBalance FROM accounts WHERE user_id = ?",
       [userId]
     );
 
     const [income] = await db.query(
-      "SELECT SUM(amount) AS monthlyIncome FROM Income WHERE user_id = ?",
+      "SELECT SUM(amount) AS monthlyIncome FROM income WHERE user_id = ?",
       [userId]
     );
 
     const [expenses] = await db.query(
       `SELECT SUM(amount) AS monthlyExpenses
-       FROM Expenses
+       FROM expenses
        WHERE user_id = ?
        AND MONTH(expense_date) = MONTH(CURDATE())
        AND YEAR(expense_date) = YEAR(CURDATE())`,
@@ -25,7 +25,7 @@ exports.getDashboard = async (req, res) => {
     );
 
     const [investments] = await db.query(
-      "SELECT SUM(current_value) AS investmentValue FROM Investments WHERE user_id = ?",
+      "SELECT SUM(current_value) AS investmentValue FROM investments WHERE user_id = ?",
       [userId]
     );
 

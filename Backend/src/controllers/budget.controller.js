@@ -5,7 +5,7 @@ exports.getBudgets = async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.query(
-      "SELECT * FROM Budgets WHERE user_id = ? ORDER BY period_start DESC",
+      "SELECT * FROM budgets WHERE user_id = ? ORDER BY period_start DESC",
       [userId]
     );
 
@@ -25,7 +25,7 @@ exports.addBudget = async (req, res) => {
     }
 
     const [result] = await db.query(
-      "INSERT INTO Budgets (user_id, category, allocated_amount, period_start, annual_spent) VALUES (?, ?, ?, ?, 0)",
+      "INSERT INTO budgets (user_id, category, allocated_amount, period_start, annual_spent) VALUES (?, ?, ?, ?, 0)",
       [userId, category, allocated_amount, period_start || new Date().toISOString().slice(0, 10)]
     );
 
@@ -41,7 +41,7 @@ exports.deleteBudget = async (req, res) => {
     const budgetId = req.params.id;
 
     const [result] = await db.query(
-      "DELETE FROM Budgets WHERE budget_id = ? AND user_id = ?",
+      "DELETE FROM budgets WHERE budget_id = ? AND user_id = ?",
       [budgetId, userId]
     );
 

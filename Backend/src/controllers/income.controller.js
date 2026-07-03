@@ -5,7 +5,7 @@ exports.getIncome = async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.query(
-      "SELECT * FROM Income WHERE user_id = ? ORDER BY start_date DESC",
+      "SELECT * FROM income WHERE user_id = ? ORDER BY start_date DESC",
       [userId]
     );
 
@@ -25,7 +25,7 @@ exports.addIncome = async (req, res) => {
     }
 
     const [result] = await db.query(
-      "INSERT INTO Income (user_id, account_id, source_name, amount, frequency, start_date) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO income (user_id, account_id, source_name, amount, frequency, start_date) VALUES (?, ?, ?, ?, ?, ?)",
       [userId, account_id, source_name, amount, frequency || "Monthly", start_date]
     );
 

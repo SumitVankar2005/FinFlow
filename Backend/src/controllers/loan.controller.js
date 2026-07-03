@@ -5,7 +5,7 @@ exports.getLoans = async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.query(
-      "SELECT * FROM Loans_Purchases WHERE user_id = ? ORDER BY start_date DESC",
+      "SELECT * FROM loans_purchases WHERE user_id = ? ORDER BY start_date DESC",
       [userId]
     );
 
@@ -25,7 +25,7 @@ exports.addLoan = async (req, res) => {
     }
 
     const [result] = await db.query(
-      `INSERT INTO Loans_Purchases
+      `INSERT INTO loans_purchases
         (user_id, account_id, type, item, principal_amount, outstanding_balance, monthly_emi, interest_rate, start_date, end_date, next_due_date, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
       [
@@ -55,7 +55,7 @@ exports.deleteLoan = async (req, res) => {
     const loanId = req.params.id;
 
     const [result] = await db.query(
-      "DELETE FROM Loans_Purchases WHERE loan_id = ? AND user_id = ?",
+      "DELETE FROM loans_purchases WHERE loan_id = ? AND user_id = ?",
       [loanId, userId]
     );
 

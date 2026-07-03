@@ -4,7 +4,7 @@ exports.getAccounts = async (req, res) => {
   try {
     const userId = req.user.id;
     const [rows] = await db.query(
-      "SELECT * FROM Accounts WHERE user_id = ?",
+      "SELECT * FROM accounts WHERE user_id = ?",
       [userId]
     );
     res.json(rows);
@@ -23,7 +23,7 @@ exports.addAccount = async (req, res) => {
     }
 
     await db.query(
-      "INSERT INTO Accounts (user_id, account_type, balance, bank_name, account_number) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO accounts (user_id, account_type, balance, bank_name, account_number) VALUES (?, ?, ?, ?, ?)",
       [userId, account_type, balance || 0, bank_name, account_number]
     );
 
@@ -43,7 +43,7 @@ exports.updateAccount = async (req, res) => {
     const { account_type, balance, bank_name } = req.body;
 
     const [result] = await db.query(
-      "UPDATE Accounts SET account_type = ?, balance = ?, bank_name = ? WHERE account_id = ? AND user_id = ?",
+      "UPDATE accounts SET account_type = ?, balance = ?, bank_name = ? WHERE account_id = ? AND user_id = ?",
       [account_type, balance, bank_name, accountId, userId]
     );
 
@@ -63,7 +63,7 @@ exports.deleteAccount = async (req, res) => {
     const userId = req.user.id;
 
     const [result] = await db.query(
-      "DELETE FROM Accounts WHERE account_id = ? AND user_id = ?",
+      "DELETE FROM accounts WHERE account_id = ? AND user_id = ?",
       [accountId, userId]
     );
 

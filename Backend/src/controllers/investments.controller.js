@@ -5,7 +5,7 @@ exports.getInvestments = async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.query(
-      "SELECT * FROM Investments WHERE user_id = ? ORDER BY purchase_date DESC",
+      "SELECT * FROM investments WHERE user_id = ? ORDER BY purchase_date DESC",
       [userId]
     );
 
@@ -25,7 +25,7 @@ exports.addInvestment = async (req, res) => {
     }
 
     const [result] = await db.query(
-      `INSERT INTO Investments
+      `INSERT INTO investments
         (user_id, account_id, investment_type, principal_amount, current_value, purchase_date, symbol_name, status, notes)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'active', ?)`,
       [userId, account_id, investment_type, principal_amount, current_value || principal_amount, purchase_date, symbol_name || null, notes || null]
@@ -43,7 +43,7 @@ exports.deleteInvestment = async (req, res) => {
     const investmentId = req.params.id;
 
     const [result] = await db.query(
-      "DELETE FROM Investments WHERE investment_id = ? AND user_id = ?",
+      "DELETE FROM investments WHERE investment_id = ? AND user_id = ?",
       [investmentId, userId]
     );
 

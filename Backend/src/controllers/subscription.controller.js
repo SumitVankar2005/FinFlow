@@ -5,7 +5,7 @@ exports.getSubscriptions = async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.query(
-      "SELECT * FROM Subscriptions WHERE user_id = ? ORDER BY renewal_date ASC",
+      "SELECT * FROM subscriptions WHERE user_id = ? ORDER BY renewal_date ASC",
       [userId]
     );
 
@@ -41,7 +41,7 @@ exports.deleteSubscription = async (req, res) => {
     const subscriptionId = req.params.id;
 
     const [result] = await db.query(
-      "DELETE FROM Subscriptions WHERE subscription_id = ? AND user_id = ?",
+      "DELETE FROM subscriptions WHERE subscription_id = ? AND user_id = ?",
       [subscriptionId, userId]
     );
 

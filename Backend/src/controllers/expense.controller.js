@@ -4,7 +4,7 @@ exports.getExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
     const [rows] = await db.query(
-      "SELECT * FROM Expenses WHERE user_id = ? ORDER BY expense_date DESC",
+      "SELECT * FROM expenses WHERE user_id = ? ORDER BY expense_date DESC",
       [userId]
     );
     res.json(rows);
@@ -23,7 +23,7 @@ exports.addExpense = async (req, res) => {
     }
 
     await db.query(
-      `INSERT INTO Expenses (user_id, account_id, category, amount, expense_date, description)
+      `INSERT INTO expenses (user_id, account_id, category, amount, expense_date, description)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [userId, account_id, category, amount, expense_date, description || null]
     );
@@ -38,7 +38,7 @@ exports.deleteExpense = async (req, res) => {
   try {
     const userId = req.user.id;
     const [result] = await db.query(
-      "DELETE FROM Expenses WHERE expense_id = ? AND user_id = ?",
+      "DELETE FROM expenses WHERE expense_id = ? AND user_id = ?",
       [req.params.id, userId]
     );
     if (result.affectedRows === 0) {

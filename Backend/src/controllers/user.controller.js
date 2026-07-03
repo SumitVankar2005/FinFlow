@@ -4,7 +4,7 @@ exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const [rows] = await db.query(
-      "SELECT user_id, name, email, phone, reg_date, address FROM Users WHERE user_id = ?",
+      "SELECT user_id, name, email, phone, reg_date, address FROM users WHERE user_id = ?",
       [userId]
     );
     if (rows.length === 0) {
@@ -22,7 +22,7 @@ exports.updateProfile = async (req, res) => {
     const { name, phone, address } = req.body;
 
     await db.query(
-      "UPDATE Users SET name = ?, phone = ?, address = ? WHERE user_id = ?",
+      "UPDATE users SET name = ?, phone = ?, address = ? WHERE user_id = ?",
       [name, phone, address, userId]
     );
 
