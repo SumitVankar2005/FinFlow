@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      "SELECT user_id, name, email, phone, password FROM Users WHERE email = ?",
+      "SELECT user_id, name, email, phone, password FROM users WHERE email = ?",
       [email]
     );
 
