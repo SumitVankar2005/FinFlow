@@ -154,6 +154,71 @@
   .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; background:var(--bg3); color:var(--muted); border:1px solid var(--border); }
   .delete-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; padding:4px 8px; border-radius:6px; transition:all 0.15s; }
   .delete-btn:hover { background:rgba(255,92,110,0.12); color:var(--danger); }
+
+  /* MOBILE MENU TOGGLE + OVERLAY (hidden on desktop) */
+  .menu-toggle { display:none; background:none; border:none; color:var(--text); font-size:20px; cursor:pointer; padding:4px 8px; margin-right:4px; }
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99; }
+  .sidebar-overlay.open { display:block; }
+
+  /* TABLE SCROLL WRAPPER so wide tables don't break layout on small screens */
+  .card table { min-width:520px; }
+
+  /* ===================== RESPONSIVE: TABLET ===================== */
+  @media (max-width: 1024px) {
+    .metric-grid { grid-template-columns:repeat(2,1fr); }
+    .grid3 { grid-template-columns:1fr; }
+    .sub-grid { grid-template-columns:repeat(2,1fr); }
+  }
+
+  /* ===================== RESPONSIVE: MOBILE ===================== */
+  @media (max-width: 768px) {
+    body { display:block; }
+
+    /* Sidebar becomes an off-canvas drawer */
+    .sidebar { transform:translateX(-100%); transition:transform 0.25s ease; width:240px; box-shadow:0 0 24px rgba(0,0,0,0.5); }
+    .sidebar.open { transform:translateX(0); }
+
+    .main { margin-left:0; }
+
+    .menu-toggle { display:inline-block; }
+
+    .topbar { padding:12px 14px; flex-wrap:wrap; gap:8px; }
+    .page-title { font-size:17px; flex:1; }
+    .topbar-actions { gap:6px; flex-wrap:wrap; }
+    .topbar-actions span#topbarDate { display:none; } /* save space on small screens */
+    .btn { padding:6px 10px; font-size:12px; }
+
+    .content { padding:14px; }
+
+    /* All multi-column grids collapse to a single column */
+    .metric-grid,
+    .grid2,
+    .grid3,
+    .sub-grid,
+    .form-grid { grid-template-columns:1fr; }
+
+    .metric-card { padding:14px 16px; }
+    .metric-value { font-size:22px; }
+
+    .card { padding:14px; }
+
+    /* Make wide tables horizontally scrollable instead of squashing/overflowing the page */
+    .card { overflow-x:auto; }
+    table { display:block; overflow-x:auto; white-space:nowrap; }
+    thead, tbody, tr { display:table; width:100%; table-layout:fixed; }
+
+    .donut-wrap { flex-direction:column; align-items:flex-start; }
+
+    .modal { width:100%; max-width:100vw; height:100%; max-height:100vh; border-radius:0; padding:18px; }
+    .modal-overlay.open { align-items:stretch; justify-content:stretch; }
+
+    .loan-row { flex-wrap:wrap; gap:6px; }
+  }
+
+  @media (max-width: 420px) {
+    .metric-value { font-size:19px; }
+    .logo-title { font-size:19px; }
+  }
 </style>
 </head>
 <body>
@@ -189,8 +254,10 @@
 </nav>
 
 <!-- MAIN -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <div class="main">
   <div class="topbar">
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-actions">
       <span style="font-size:12px;color:var(--muted);" id="topbarDate"></span>
@@ -538,6 +605,16 @@ if (!getToken()) window.location.href = "./login.html";
 let allExpenses = [];
 let allAccounts = [];
 
+// =================== MOBILE SIDEBAR ===================
+function toggleSidebar() {
+  document.querySelector(".sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("open");
+}
+function closeSidebar() {
+  document.querySelector(".sidebar").classList.remove("open");
+  document.getElementById("sidebarOverlay").classList.remove("open");
+}
+
 // =================== NAVIGATION ===================
 function navigate(section, el) {
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -547,6 +624,7 @@ function navigate(section, el) {
   document.getElementById("page-title").textContent =
     section === "loans" ? "Loans & EMI" :
     section.charAt(0).toUpperCase() + section.slice(1);
+  closeSidebar(); // auto-close drawer on mobile after picking a section
 
   // Lazy load section data
   const loaders = {
