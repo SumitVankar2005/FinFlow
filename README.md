@@ -2,12 +2,26 @@
 
 A full-stack personal finance management application for tracking income, expenses, budgets, investments, loans, and subscriptions.
 
+🔗 **Live Demo**: [fin-flow-two-nu.vercel.app](https://fin-flow-two-nu.vercel.app)
+
+> Note: this is a student project built for learning purposes. Accounts, income, and expenses are entered manually (no real bank linking), and the free hosting tiers below may take a few seconds to "wake up" on first load.
+
 ## Tech Stack
 
 - **Backend**: Node.js, Express, MySQL
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
 - **Authentication**: JWT tokens
 - **Password Hashing**: bcrypt
+
+## Deployment
+
+| Layer | Platform |
+|-------|----------|
+| Frontend | [Vercel](https://vercel.com) |
+| Backend API | [Render](https://render.com) |
+| Database | MySQL on [Railway](https://railway.app) |
+
+The backend is deployed as a Render web service reading its DB credentials from Railway's MySQL connection string via environment variables. The frontend is deployed on Vercel as static files, calling the Render API over HTTPS.
 
 ## Project Structure
 
@@ -32,53 +46,6 @@ FinFlow/
     ├── createAccount.html   # Registration page
     ├── dashboard.html       # Main dashboard
     └── FinFlow.html         # Landing page
-```
-
-## Setup Instructions
-
-### 1. Database Setup
-
-```bash
-# Login to MySQL
-mysql -u root -p
-
-# Run schema
-mysql -u root -p < Database/schema.sql
-
-# (Optional) Load sample data
-mysql -u root -p < Database/sample_data.sql
-```
-
-### 2. Backend Setup
-
-```bash
-cd Backend
-
-# Copy environment file
-cp .env.example .env
-
-# Edit .env with your database credentials
-# DB_HOST=localhost
-# DB_USER=root
-# DB_PASS=your_password
-# DB_NAME=finance_db
-
-# Install dependencies
-npm install
-
-# Start server
-npm run dev     # Development with nodemon
-npm start       # Production
-```
-
-### 3. Frontend Setup
-
-Open `Frontend/index.html` or `Frontend/login.html` in a browser.
-
-Or serve with a static server:
-```bash
-cd Frontend
-npx serve
 ```
 
 ## API Endpoints
@@ -114,6 +81,8 @@ npx serve
 
 ## Default Test Credentials
 
+⚠️ **Demo/testing accounts only** — these exist on the live deployed database too. Don't rely on them for anything real, and don't add sensitive personal data to these accounts.
+
 After loading sample_data.sql:
 
 | Email | Password |
@@ -138,3 +107,12 @@ After loading sample_data.sql:
 - Change `JWT_SECRET` in `.env` before production
 - Use HTTPS in production
 - Never commit `.env` file
+
+## Known Limitations
+
+This is a student project, not a production fintech product. A few honest caveats:
+
+- Accounts, income, and expenses are entered **manually** — there's no real bank account linking or transaction sync.
+- Free-tier hosting (Render) may spin down when idle, so the first request after inactivity can take ~30-50 seconds.
+- No automated test suite yet.
+- Historical monthly income data isn't tracked — only the current monthly income figure is available, so cash flow trends over time are approximate for income (expenses are tracked with full date history).
