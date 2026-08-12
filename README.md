@@ -8,7 +8,7 @@ A full-stack personal finance management application for tracking income, expens
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, MySQL
+- **Backend**: Node.js, Express, PostgreSQL
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
 - **Authentication**: JWT tokens
 - **Password Hashing**: bcrypt
@@ -19,9 +19,9 @@ A full-stack personal finance management application for tracking income, expens
 |-------|----------|
 | Frontend | [Vercel](https://vercel.com) |
 | Backend API | [Render](https://render.com) |
-| Database | MySQL on [Railway](https://railway.app) |
+| Database | PostgreSQL on [Neon](https://neon.tech) |
 
-The backend is deployed as a Render web service reading its DB credentials from Railway's MySQL connection string via environment variables. The frontend is deployed on Vercel as static files, calling the Render API over HTTPS.
+The backend is deployed as a Render web service reading its DB credentials from Neon's pooled PostgreSQL connection string via environment variables. The frontend is deployed on Vercel as static files, calling the Render API over HTTPS.
 
 ## Project Structure
 
@@ -38,8 +38,8 @@ FinFlow/
 │   ├── .env.example
 │   └── package.json
 ├── Database/
-│   ├── schema.sql           # Database schema
-│   └── sample_data.sql      # Sample data for testing
+│   ├── schema_postgres.sql       # Database schema (PostgreSQL)
+│   └── sample_data_postgres.sql  # Sample data for testing (PostgreSQL)
 └── Frontend/
     ├── index.html           # Entry point (redirects)
     ├── login.html           # Login page
@@ -83,7 +83,7 @@ FinFlow/
 
 ⚠️ **Demo/testing accounts only** — these exist on the live deployed database too. Don't rely on them for anything real, and don't add sensitive personal data to these accounts.
 
-After loading sample_data.sql:
+After loading sample_data_postgres.sql:
 
 | Email | Password |
 |-------|----------|
@@ -113,6 +113,14 @@ After loading sample_data.sql:
 This is a student project, not a production fintech product. A few honest caveats:
 
 - Accounts, income, and expenses are entered **manually** — there's no real bank account linking or transaction sync.
-- Free-tier hosting (Render) may spin down when idle, so the first request after inactivity can take ~30-50 seconds.
+- Free-tier hosting (Render, Neon) may spin down or pause when idle, so the first request after inactivity can take a few seconds to ~30-50 seconds to respond.
 - No automated test suite yet.
 - Historical monthly income data isn't tracked — only the current monthly income figure is available, so cash flow trends over time are approximate for income (expenses are tracked with full date history).
+
+## Migration Notes
+
+This project originally used MySQL (hosted on Railway) and was migrated to PostgreSQL (hosted on Neon). If you're working from an older clone:
+
+- Database schema/seed files are now `schema_postgres.sql` and `sample_data_postgres.sql` under `Database/`.
+- Backend controllers use the `pg` driver (`$1, $2...` placeholders, `rows`/`rowCount` instead of mysql2's array-destructured results and `insertId`/`affectedRows`).
+- `DATABASE_URL` should point to a Neon pooled connection string rather than a Railway MySQL URL.
