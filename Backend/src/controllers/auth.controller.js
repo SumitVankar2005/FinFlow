@@ -17,13 +17,13 @@ exports.register = async (req, res) => {
     const hashed = await bcryptjs.hash(password, 10);
 
     await db.query(
-      "INSERT INTO users (name, email, phone, password, reg_date) VALUES (?, ?, ?, ?, CURDATE())",
+      "INSERT INTO users (name, email, phone, password, reg_date) VALUES ($1, $2, $3, $4, CURRENT_DATE)",
       [name, email, phone, hashed]
     );
 
     return res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    if (err.code === "ER_DUP_ENTRY") {
+    if (err.code === "23505") {
       return res.status(400).json({ error: "Email or phone already registered" });
     }
     return res.status(500).json({ error: err.message });
@@ -38,8 +38,8 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const [rows] = await db.query(
-      "SELECT user_id, name, email, phone, password FROM users WHERE email = ?",
+    const { rows } = await db.query(
+      "SELECT user_id, name, email, phone, password FROM users WHERE email = $1",
       [email]
     );
 

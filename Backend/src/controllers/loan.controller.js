@@ -4,8 +4,8 @@ exports.getLoans = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const [rows] = await db.query(
-      "SELECT * FROM loans_purchases WHERE user_id = ? ORDER BY start_date DESC",
+    const { rows } = await db.query(
+      "SELECT * FROM loans_purchases WHERE user_id = $1 ORDER BY start_date DESC",
       [userId]
     );
 
@@ -24,10 +24,11 @@ exports.addLoan = async (req, res) => {
       return res.status(400).json({ error: "account_id, type, item and principal_amount are required" });
     }
 
-    const [result] = await db.query(
+    const result = await db.query(
       `INSERT INTO loans_purchases
         (user_id, account_id, type, item, principal_amount, outstanding_balance, monthly_emi, interest_rate, start_date, end_date, next_due_date, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'active')
+       RETURNING loan_id`,
       [
         userId,
         account_id,
@@ -43,7 +44,7 @@ exports.addLoan = async (req, res) => {
       ]
     );
 
-    res.status(201).json({ message: "Loan added", loanId: result.insertId });
+    res.status(201).json({ message: "Loan added", loanId: result.rows[0].loan_id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -54,12 +55,12 @@ exports.deleteLoan = async (req, res) => {
     const userId = req.user.id;
     const loanId = req.params.id;
 
-    const [result] = await db.query(
-      "DELETE FROM loans_purchases WHERE loan_id = ? AND user_id = ?",
+    const result = await db.query(
+      "DELETE FROM loans_purchases WHERE loan_id = $1 AND user_id = $2",
       [loanId, userId]
     );
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: "Loan not found" });
     }
 

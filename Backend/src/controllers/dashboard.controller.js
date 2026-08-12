@@ -5,34 +5,34 @@ exports.getDashboard = async (req, res) => {
 
     const userId = req.user.id;
 
-    const [accounts] = await db.query(
-      "SELECT SUM(balance) AS totalBalance FROM accounts WHERE user_id = ?",
+    const accountsResult = await db.query(
+      "SELECT SUM(balance) AS \"totalBalance\" FROM accounts WHERE user_id = $1",
       [userId]
     );
 
-    const [income] = await db.query(
-      "SELECT SUM(amount) AS monthlyIncome FROM income WHERE user_id = ?",
+    const incomeResult = await db.query(
+      "SELECT SUM(amount) AS \"monthlyIncome\" FROM income WHERE user_id = $1",
       [userId]
     );
 
-    const [expenses] = await db.query(
-      `SELECT SUM(amount) AS monthlyExpenses
+    const expensesResult = await db.query(
+      `SELECT SUM(amount) AS "monthlyExpenses"
        FROM expenses
-       WHERE user_id = ?
-       AND MONTH(expense_date) = MONTH(CURDATE())
-       AND YEAR(expense_date) = YEAR(CURDATE())`,
+       WHERE user_id = $1
+       AND EXTRACT(MONTH FROM expense_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+       AND EXTRACT(YEAR FROM expense_date) = EXTRACT(YEAR FROM CURRENT_DATE)`,
       [userId]
     );
 
-    const [investments] = await db.query(
-      "SELECT SUM(current_value) AS investmentValue FROM investments WHERE user_id = ?",
+    const investmentsResult = await db.query(
+      "SELECT SUM(current_value) AS \"investmentValue\" FROM investments WHERE user_id = $1",
       [userId]
     );
 
-    const totalBalance = accounts[0].totalBalance || 0;
-    const monthlyIncome = income[0].monthlyIncome || 0;
-    const monthlyExpenses = expenses[0].monthlyExpenses || 0;
-    const investmentValue = investments[0].investmentValue || 0;
+    const totalBalance = accountsResult.rows[0].totalBalance || 0;
+    const monthlyIncome = incomeResult.rows[0].monthlyIncome || 0;
+    const monthlyExpenses = expensesResult.rows[0].monthlyExpenses || 0;
+    const investmentValue = investmentsResult.rows[0].investmentValue || 0;
 
     const netWorth = Number(totalBalance) + Number(investmentValue);
 

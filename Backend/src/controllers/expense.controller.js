@@ -3,8 +3,8 @@ const db = require("../config/db");
 exports.getExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
-    const [rows] = await db.query(
-      "SELECT * FROM expenses WHERE user_id = ? ORDER BY expense_date DESC",
+    const { rows } = await db.query(
+      "SELECT * FROM expenses WHERE user_id = $1 ORDER BY expense_date DESC",
       [userId]
     );
     res.json(rows);
@@ -24,7 +24,7 @@ exports.addExpense = async (req, res) => {
 
     await db.query(
       `INSERT INTO expenses (user_id, account_id, category, amount, expense_date, description)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+       VALUES ($1, $2, $3, $4, $5, $6)`,
       [userId, account_id, category, amount, expense_date, description || null]
     );
 
@@ -37,11 +37,11 @@ exports.addExpense = async (req, res) => {
 exports.deleteExpense = async (req, res) => {
   try {
     const userId = req.user.id;
-    const [result] = await db.query(
-      "DELETE FROM expenses WHERE expense_id = ? AND user_id = ?",
+    const result = await db.query(
+      "DELETE FROM expenses WHERE expense_id = $1 AND user_id = $2",
       [req.params.id, userId]
     );
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: "Expense not found" });
     }
     res.json({ message: "Expense deleted" });
